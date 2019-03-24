@@ -1,0 +1,14 @@
+{
+    "name": "lencse/docuverify",
+    "description": "Verify PHP code examples in markdown documentation",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Levente Löki",
+            "email": "leventeloki@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
