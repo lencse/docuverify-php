@@ -31,7 +31,6 @@
         "lencse/omar-coding-standard": "^0.1.1",
         "phpstan/phpstan": "^0.11.4",
         "povils/phpmnd": "^2.1",
-        "vimeo/psalm": "^3.2",
         "phpmetrics/phpmetrics": "^2.4",
         "lencse/min-coverage": "^1.0",
         "infection/infection": "^0.12.2",

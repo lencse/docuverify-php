@@ -1,47 +1,49 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lencse\Docuverify;
 
-final class StringCollection implements \Iterator
+use Iterator;
+use function current;
+use function key;
+use function next;
+use function reset;
+
+final class StringCollection implements Iterator
 {
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     private $items = [];
 
     public function current(): string
     {
         return current($this->items);
     }
-    
-    /**
-     * @return false|string
-     */
-    public function next()
+
+    public function next(): void
     {
-        return next($this->items);
+        next($this->items);
     }
-    
-    public function key()
+
+    public function key(): int
     {
-        return key($this->items);
+        return (int) key($this->items);
     }
-    
+
     public function valid(): bool
     {
-        return null !== key($this->items) && false !== key($this->items);
+        return ! empty(key($this->items));
     }
-    
+
     public function rewind(): void
     {
         reset($this->items);
     }
 
-    public function push(string $item): self 
+    public function push(string $item): self
     {
         $result = new self();
         $result->items = $this->items;
         $result->items[] = $item;
+
         return $result;
     }
 }

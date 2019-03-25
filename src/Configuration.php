@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lencse\Docuverify;
 
@@ -10,14 +10,10 @@ class Configuration
     /** @var StringCollection */
     private $excludedPatterns;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $bootstrapPath;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $header;
 
     public function __construct(string $bootstrapPath, string $header)
@@ -38,12 +34,12 @@ class Configuration
         return $this->excludedPatterns;
     }
 
-    public function getBootstrapPath(): string
+    public function bootstrapPath(): string
     {
         return $this->bootstrapPath;
     }
 
-    public function getHeader(): string
+    public function header(): string
     {
         return $this->header;
     }

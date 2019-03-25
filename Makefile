@@ -1,10 +1,10 @@
 .PHONY: test coverage min-coverage clean cs cs-fix dev coveralls
-.PHONY: mnd psalm phpmetrics infection verify require phpmd
+.PHONY: mnd phpmetrics infection verify require phpmd
 
 vendor: composer.json composer.lock
 	composer install
 
-verify: coverage min-coverage cs phpstan phpmd psalm require mnd phpmetrics
+verify: coverage min-coverage cs phpstan phpmd require mnd phpmetrics
 
 dev: cs-fix verify
 
@@ -42,9 +42,6 @@ phpstan: vendor
 
 mnd: vendor
 	vendor/bin/phpmnd --non-zero-exit-on-violation src
-
-psalm: vendor
-	vendor/bin/psalm
 
 phpmetrics: vendor logs/phpunit
 	vendor/bin/phpmetrics \
