@@ -5,9 +5,9 @@ namespace Lencse\Docuverify;
 use League\CommonMark\CommonMarkConverter;
 use PHPHtmlParser\Dom;
 
-final class FileTester
+final class Tester
 {
-    public function testFile(string $path): bool
+    public function testFile(string $path): void
     {
         $tmpdir = sys_get_temp_dir() . '/' . uniqid('', true);
         $converter = new CommonMarkConverter();
@@ -31,8 +31,7 @@ EOF;
             $php = \htmlspecialchars_decode($codeFragment->text());
             $file = $tmpdir . '/file' . $i . '.php';
             file_put_contents($file, $header . $php);
-            $x = shell_exec('php ' . $file);
+            shell_exec('php ' . $file);
         }
-        return true;
     }
 }
