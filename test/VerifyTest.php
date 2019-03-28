@@ -45,14 +45,16 @@ class VerifyTest extends TestCase
     public function testWithFileWithOneCode(): void
     {
         $config = $this->config()->withFile('02.md');
-        $this->assertTrue($this->tester->verify($config, $this->tmpDir));
+        $this->tester->verify($config, $this->tmpDir);
+        $this->assertFalse($this->runner->failed());
         $this->assertEquals([$this->tmpDir . '/02.md/snippet1.php'], $this->runner->ran());
     }
 
     public function testWithFileWithWrongCode(): void
     {
         $config = $this->config()->withFile('03.md');
-        $this->assertFalse($this->tester->verify($config, $this->tmpDir));
+        $this->tester->verify($config, $this->tmpDir);
+        $this->assertTrue($this->runner->failed());
         $this->assertEquals([
             $this->tmpDir . '/03.md/snippet1.php',
             $this->tmpDir . '/03.md/snippet2.php',
@@ -62,7 +64,8 @@ class VerifyTest extends TestCase
     public function testRunningFileNames(): void
     {
         $config = $this->config()->withFile('02.md')->withFile('doc/01.md');
-        $this->assertTrue($this->tester->verify($config, $this->tmpDir));
+        $this->tester->verify($config, $this->tmpDir);
+        $this->assertFalse($this->runner->failed());
         $this->assertEquals([
             $this->tmpDir . '/02.md/snippet1.php',
             $this->tmpDir . '/doc/01.md/snippet1.php',

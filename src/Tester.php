@@ -24,7 +24,7 @@ final class Tester
         $this->fileSystem = new Filesystem();
     }
 
-    public function verify(Configuration $config, string $tmpDir): bool
+    public function verify(Configuration $config, string $tmpDir): void
     {
         foreach ($config->files() as $fileName) {
             $file = new SplFileInfo(
@@ -53,12 +53,8 @@ final class Tester
                 $php = htmlspecialchars_decode($codeFragment->text());
                 $phpFile = $fileDir . 'snippet' . ($i + 1) . '.php';
                 file_put_contents($phpFile, $header . $php);
-                if (! $this->runner->runFile($phpFile)) {
-                    return false;
-                }
+                $this->runner->runFile($phpFile);
             }
         }
-
-        return true;
     }
 }

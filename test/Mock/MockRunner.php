@@ -11,13 +11,19 @@ final class MockRunner implements Runner
     /** @var string[] */
     private $ran = [];
 
-    public function runFile(string $path): bool
+    /** @var bool */
+    private $failed = false;
+
+    public function runFile(string $path): void
     {
         $file = new SplFileInfo($path, '', '');
         $content = $file->getContents();
         $this->ran[] = $path;
+        if (strpos($content, 'ERROR') === false) {
+            return;
+        }
 
-        return ! strpos($content, 'ERROR') !== false;
+        $this->failed = true;
     }
 
     /**
@@ -26,5 +32,10 @@ final class MockRunner implements Runner
     public function ran(): array
     {
         return $this->ran;
+    }
+
+    public function failed(): bool
+    {
+        return $this->failed;
     }
 }
