@@ -7,10 +7,4 @@
         <file path="README.md" />
         <file path="doc/INSTALLATION.md" />
     </files>
-    <header><![CDATA[<?php
-
-namespace Readme;
-
-require_once '%%AUTOLOAD_PATH%%';
-]]></header>
 </docuverify>

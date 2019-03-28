@@ -3,8 +3,10 @@
 namespace Test;
 
 use Lencse\Docuverify\Configurator;
+use PHPUnit\Framework\Error\Error;
 use PHPUnit\Framework\TestCase;
 use function iterator_to_array;
+use function strpos;
 
 class ConfiguratorTest extends TestCase
 {
@@ -22,5 +24,13 @@ class ConfiguratorTest extends TestCase
             'README.md',
             'doc/INSTALLATION.md',
         ], iterator_to_array($config->files()));
+    }
+
+    public function testWrongXml(): void
+    {
+        $configurator = new Configurator();
+        $this->expectException(Error::class);
+        $configurator->fromXml(__DIR__ . '/fixtures/xml/wrong.xml');
+        $this->assertTrue(strpos($this->getExpectedException()->getMessage(), 'header') !== false);
     }
 }
