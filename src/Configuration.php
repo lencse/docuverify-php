@@ -44,10 +44,10 @@ final class Configuration
         return $this->currentDir;
     }
 
-    public function withFile(string $pattern): self
+    public function withFile(string $fileName): self
     {
         $result = $this->copy();
-        $result->files = $result->files()->push($pattern);
+        $result->files = $result->files()->push($fileName);
 
         return $result;
     }

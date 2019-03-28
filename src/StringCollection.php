@@ -8,7 +8,7 @@ use function key;
 use function next;
 use function reset;
 
-class StringCollection implements Iterator
+final class StringCollection implements Iterator
 {
     /** @var string[] */
     private $strings = [];

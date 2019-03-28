@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<docuverify>
+    <bootstrap path="vendor/autoload.php" />
+    <files>
+        <file path="README.md" />
+    </files>
+    <header><![CDATA[<?php
+
+namespace Readme;
+
+require_once '%%AUTOLOAD_PATH%%';
+]]></header>
+</docuverify>
