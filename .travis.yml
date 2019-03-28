@@ -1,0 +1,93 @@
+language: php
+
+sudo: false
+
+dist: xenial
+
+cache:
+    directories:
+        - $HOME/.composer/cache
+
+jobs:
+    include:
+        - &TEST_JOB
+            stage: Test
+            php: 7.1
+            env: DEPS=lowest
+            before_install:
+                - phpenv config-rm xdebug.ini || return 0
+            install:
+                - if [[ $DEPS == 'lowest' ]]; then travis_retry composer update -n --prefer-lowest --prefer-stable; fi
+                - if [[ $DEPS == 'latest' ]]; then travis_retry composer update -n --prefer-dist; fi
+            script:
+                - make test
+
+        -
+            <<: *TEST_JOB
+            php: 7.1
+            env: DEPS=latest
+
+        -
+            <<: *TEST_JOB
+            php: 7.2
+            env: DEPS=lowest
+
+        -
+            <<: *TEST_JOB
+            php: 7.2
+            env: DEPS=latest
+
+        -
+            <<: *TEST_JOB
+            php: 7.3
+            env: DEPS=lowest
+
+        -
+            <<: *TEST_JOB
+            php: 7.3
+            env: DEPS=latest
+
+        -
+            <<: *TEST_JOB
+            php: 7.4snapshot
+            env: DEPS=lowest
+
+        -
+            <<: *TEST_JOB
+            php: 7.4snapshot
+            env: DEPS=latest
+
+        -
+            <<: *TEST_JOB
+            php: nightly
+            env: DEPS=lowest
+
+        -
+            <<: *TEST_JOB
+            php: nightly
+            env: DEPS=latest
+
+        - stage: Analyze
+          name: Code analysis and coverage tests
+          php: 7.3
+          cache:
+              directories:
+                  - $HOME/.composer/cache
+          install:
+              - make vendor
+          script:
+              - make verify
+#          after_success:
+#              - make coveralls
+
+        - stage: Analyze
+          name: Mutation test
+          php: 7.3
+          install:
+              - make vendor
+          script:
+              - make infection
+
+    allow_failures:
+        - php: nightly
+        - php: 7.4snapshot
