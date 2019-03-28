@@ -6,9 +6,9 @@ use League\CommonMark\CommonMarkConverter;
 use PHPHtmlParser\Dom;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\SplFileInfo;
+use const PHP_EOL;
 use function file_put_contents;
 use function htmlspecialchars_decode;
-use function realpath;
 
 final class Tester
 {
@@ -26,11 +26,13 @@ final class Tester
 
     public function verify(Configuration $config, string $tmpDir): bool
     {
-        $this->fileSystem->mkdir($tmpDir);
-        $autoladDir = realpath(__DIR__ . '/../vendor/autoload.php');
+        $this->fileSystem->remove($tmpDir);
         foreach ($config->files() as $fileName) {
-            $file = new SplFileInfo($config->currentDir() . '/' . $fileName, '', '');
-            /** @var SplFileInfo $file */
+            $file = new SplFileInfo(
+                $config->currentDir() . '/' . $fileName,
+                $config->currentDir(),
+                ''
+            );
             $converter = new CommonMarkConverter();
             $content = $file->getContents();
             $html = $converter->convertToHtml($content);
@@ -40,17 +42,19 @@ final class Tester
                 'preserveLineBreaks' => true,
             ]);
             $codeFragments = $dom->find('code.language-php');
-            $header = <<<EOF
-<?php
-namespace Readme;
-require_once '$autoladDir';
-EOF;
+            $header = '<?php' . PHP_EOL;
+            $relPath = $this->fileSystem->makePathRelative(
+                (string) $file->getRealPath(),
+                $config->currentDir()
+            );
+            $fileDir = $tmpDir . '/' . $relPath;
+            $this->fileSystem->mkdir($fileDir);
             foreach ($codeFragments as $i => $codeFragment) {
                 /** @var Dom\HtmlNode $codeFragment */
                 $php = htmlspecialchars_decode($codeFragment->text());
-                $file = $tmpDir . '/file' . $i . '.php';
-                file_put_contents($file, $header . $php);
-                if (! $this->runner->runFile($file)) {
+                $phpFile = $fileDir . 'snippet' . ($i + 1) . '.php';
+                file_put_contents($phpFile, $header . $php);
+                if (! $this->runner->runFile($phpFile)) {
                     return false;
                 }
             }

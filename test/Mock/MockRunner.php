@@ -15,12 +15,9 @@ final class MockRunner implements Runner
     {
         $file = new SplFileInfo($path, '', '');
         $content = $file->getContents();
-        if (strpos($content, 'ERROR') !== false) {
-            return false;
-        }
         $this->ran[] = $path;
 
-        return true;
+        return ! strpos($content, 'ERROR') !== false;
     }
 
     /**
