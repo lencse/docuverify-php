@@ -4,56 +4,58 @@ namespace Lencse\Docuverify;
 
 use League\CommonMark\CommonMarkConverter;
 use PHPHtmlParser\Dom;
-use Symfony\Component\Finder\Finder;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\SplFileInfo;
-use function file_get_contents;
 use function file_put_contents;
 use function htmlspecialchars_decode;
 use function realpath;
-use function shell_exec;
 
 final class Tester
 {
     /** @var Runner */
     private $runner;
 
+    /** @var Filesystem */
+    private $fileSystem;
+
     public function __construct(Runner $runner)
     {
         $this->runner = $runner;
+        $this->fileSystem = new Filesystem();
     }
 
-    public function run(Configuration $config, string $tmpDir): void
+    public function verify(Configuration $config, string $tmpDir): bool
     {
-        $finder = new Finder();
-        foreach ($config->patterns() as $pattern) {
-            $files = $finder->files()->in($config->currentDir())->path($pattern);
-            foreach ($files as $file) {
-                /** @var SplFileInfo  $file */
-                $converter = new CommonMarkConverter();
-                $content = file_get_contents($file->getRealPath() ?: '') ?: '';
-                $html = $converter->convertToHtml($content);
-                $dom = new Dom();
-                $dom->load($html, [
-                    'removeDoubleSpace' => false,
-                    'preserveLineBreaks' => true,
-                ]);
-                $codeFragments = $dom->find('code.language-php');
-                shell_exec('rm -rf ' . $tmpDir);
-                shell_exec('mkdir ' . $tmpDir);
-                $autoladDir = realpath(__DIR__ . '/../vendor/autoload.php');
-                $header = <<<EOF
+        $this->fileSystem->mkdir($tmpDir);
+        $autoladDir = realpath(__DIR__ . '/../vendor/autoload.php');
+        foreach ($config->files() as $fileName) {
+            $file = new SplFileInfo($config->currentDir() . '/' . $fileName, '', '');
+            /** @var SplFileInfo $file */
+            $converter = new CommonMarkConverter();
+            $content = $file->getContents();
+            $html = $converter->convertToHtml($content);
+            $dom = new Dom();
+            $dom->load($html, [
+                'removeDoubleSpace' => false,
+                'preserveLineBreaks' => true,
+            ]);
+            $codeFragments = $dom->find('code.language-php');
+            $header = <<<EOF
 <?php
 namespace Readme;
 require_once '$autoladDir';
 EOF;
-                foreach ($codeFragments as $i => $codeFragment) {
-                    /** @var Dom\HtmlNode $codeFragment */
-                    $php = htmlspecialchars_decode($codeFragment->text());
-                    $file = $tmpDir . '/file' . $i . '.php';
-                    file_put_contents($file, $header . $php);
-                    $this->runner->runFile($file);
+            foreach ($codeFragments as $i => $codeFragment) {
+                /** @var Dom\HtmlNode $codeFragment */
+                $php = htmlspecialchars_decode($codeFragment->text());
+                $file = $tmpDir . '/file' . $i . '.php';
+                file_put_contents($file, $header . $php);
+                if (! $this->runner->runFile($file)) {
+                    return false;
                 }
             }
         }
+
+        return true;
     }
 }

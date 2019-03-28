@@ -31,21 +31,21 @@ class VerifyTest extends TestCase
     public function testEmptyConfig(): void
     {
         $config = $this->config();
-        $this->tester->run($config, $this->tmpDir);
+        $this->tester->verify($config, $this->tmpDir);
         $this->assertEquals([], $this->runner->ran());
     }
 
     public function testWithFileWithoutCode(): void
     {
-        $config = $this->config()->withPattern('01.md');
-        $this->tester->run($config, $this->tmpDir);
+        $config = $this->config()->withFile('01.md');
+        $this->tester->verify($config, $this->tmpDir);
         $this->assertEquals([], $this->runner->ran());
     }
 
     public function testWithFileWithOneCode(): void
     {
-        $config = $this->config()->withPattern('02.md');
-        $this->tester->run($config, $this->tmpDir);
+        $config = $this->config()->withFile('02.md');
+        $this->assertTrue($this->tester->verify($config, $this->tmpDir));
         $this->assertEquals([$this->tmpDir . '/file0.php'], $this->runner->ran());
     }
 

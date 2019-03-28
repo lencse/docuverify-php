@@ -4,5 +4,5 @@ namespace Lencse\Docuverify;
 
 interface Runner
 {
-    public function runFile(string $path): void;
+    public function runFile(string $path): bool;
 }

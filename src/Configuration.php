@@ -5,10 +5,7 @@ namespace Lencse\Docuverify;
 final class Configuration
 {
     /** @var StringCollection */
-    private $patterns;
-
-    /** @var StringCollection */
-    private $excludedPatterns;
+    private $files;
 
     /** @var string */
     private $bootstrapPath;
@@ -21,21 +18,15 @@ final class Configuration
 
     public function __construct(string $bootstrapPath, string $header, string $currentDir)
     {
-        $this->excludedPatterns = new StringCollection();
-        $this->patterns = new StringCollection();
+        $this->files = new StringCollection();
         $this->bootstrapPath = $bootstrapPath;
         $this->header = $header;
         $this->currentDir = $currentDir;
     }
 
-    public function patterns(): StringCollection
+    public function files(): StringCollection
     {
-        return $this->patterns;
-    }
-
-    public function excludedPatterns(): StringCollection
-    {
-        return $this->excludedPatterns;
+        return $this->files;
     }
 
     public function bootstrapPath(): string
@@ -53,18 +44,10 @@ final class Configuration
         return $this->currentDir;
     }
 
-    public function withPattern(string $pattern): self
+    public function withFile(string $pattern): self
     {
         $result = $this->copy();
-        $result->patterns = $result->patterns()->push($pattern);
-
-        return $result;
-    }
-
-    public function withExcludedPattern(string $pattern): self
-    {
-        $result = $this->copy();
-        $result->excludedPatterns = $result->excludedPatterns()->push($pattern);
+        $result->files = $result->files()->push($pattern);
 
         return $result;
     }
@@ -72,8 +55,7 @@ final class Configuration
     private function copy(): self
     {
         $result = new self($this->bootstrapPath(), $this->header(), $this->currentDir());
-        $result->patterns = $this->patterns();
-        $result->excludedPatterns = $this->excludedPatterns();
+        $result->files = $this->files();
 
         return $result;
     }
