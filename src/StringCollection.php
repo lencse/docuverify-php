@@ -8,41 +8,47 @@ use function key;
 use function next;
 use function reset;
 
-final class StringCollection implements Iterator
+class StringCollection implements Iterator
 {
     /** @var string[] */
-    private $items = [];
+    private $strings = [];
 
     public function current(): string
     {
-        return current($this->items);
+        return current($this->strings);
     }
 
-    public function next(): void
+    /**
+     * @return false|string
+     */
+    public function next()
     {
-        next($this->items);
+        return next($this->strings);
     }
 
-    public function key(): int
+    /**
+     * @return mixed
+     */
+    public function key()
     {
-        return (int) key($this->items);
+        return key($this->strings);
     }
 
     public function valid(): bool
     {
-        return ! empty(key($this->items));
+        return key($this->strings) !== null && key($this->strings) !== false;
     }
 
     public function rewind(): void
     {
-        reset($this->items);
+        reset($this->strings);
     }
 
-    public function push(string $item): self
+    public function push(string $str): self
     {
         $result = new self();
-        $result->items = $this->items;
-        $result->items[] = $item;
+        $result->strings = $this->strings;
+        $result->strings[] = $str;
 
         return $result;
     }
