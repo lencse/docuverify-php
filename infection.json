@@ -1,0 +1,20 @@
+{
+    "timeout": 3,
+    "source": {
+        "directories": [
+            "src"
+        ]
+    },
+    "logs": {
+        "text": "logs/infection/report.txt",
+        "summary": "logs/infection/summary.txt",
+        "debug": "logs/infection/debug.txt",
+        "perMutator": "logs/infection/perMutator.md",
+        "badge": {
+            "branch": "master"
+        }
+    },
+    "mutators": {
+        "@default": true
+    }
+}

@@ -29,7 +29,7 @@ coverage: vendor
 		--log-junit logs/phpunit/test-report.xml
 
 min-coverage: vendor coverage
-	vendor/bin/min-coverage --min-coverage 5 --clover-file logs/phpunit/clover.xml
+	vendor/bin/min-coverage --min-coverage 90 --clover-file logs/phpunit/clover.xml
 
 cs: vendor
 	vendor/bin/phpcs --standard=Omar -s src test

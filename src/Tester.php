@@ -26,7 +26,6 @@ final class Tester
 
     public function verify(Configuration $config, string $tmpDir): bool
     {
-        $this->fileSystem->remove($tmpDir);
         foreach ($config->files() as $fileName) {
             $file = new SplFileInfo(
                 $config->currentDir() . '/' . $fileName,
