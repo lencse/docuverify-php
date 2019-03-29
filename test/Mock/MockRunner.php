@@ -22,7 +22,6 @@ final class MockRunner implements Runner
         if (strpos($content, 'ERROR') === false) {
             return;
         }
-
         $this->failed = true;
     }
 

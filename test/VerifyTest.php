@@ -23,29 +23,29 @@ class VerifyTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->runner = new MockRunner();
-        $this->tester = new Tester($this->runner);
         $this->tmpDir = sys_get_temp_dir() . '/' . uniqid('', true);
+        $this->runner = new MockRunner();
+        $this->tester = new Tester($this->runner, $this->tmpDir);
     }
 
     public function testEmptyConfig(): void
     {
         $config = $this->config();
-        $this->tester->verify($config, $this->tmpDir);
+        $this->tester->verify($config);
         $this->assertEquals([], $this->runner->ran());
     }
 
     public function testWithFileWithoutCode(): void
     {
         $config = $this->config()->withFile('01.md');
-        $this->tester->verify($config, $this->tmpDir);
+        $this->tester->verify($config);
         $this->assertEquals([], $this->runner->ran());
     }
 
     public function testWithFileWithOneCode(): void
     {
         $config = $this->config()->withFile('02.md');
-        $this->tester->verify($config, $this->tmpDir);
+        $this->tester->verify($config);
         $this->assertFalse($this->runner->failed());
         $this->assertEquals([$this->tmpDir . '/02.md/snippet1.php'], $this->runner->ran());
     }
@@ -53,7 +53,7 @@ class VerifyTest extends TestCase
     public function testNonExistingFile(): void
     {
         $config = $this->config()->withFile('02.md')->withFile('missing.md');
-        $this->tester->verify($config, $this->tmpDir);
+        $this->tester->verify($config);
         $this->assertFalse($this->runner->failed());
         $this->assertEquals([$this->tmpDir . '/02.md/snippet1.php'], $this->runner->ran());
     }
@@ -61,7 +61,7 @@ class VerifyTest extends TestCase
     public function testWithFileWithWrongCode(): void
     {
         $config = $this->config()->withFile('03.md');
-        $this->tester->verify($config, $this->tmpDir);
+        $this->tester->verify($config);
         $this->assertTrue($this->runner->failed());
         $this->assertEquals([
             $this->tmpDir . '/03.md/snippet1.php',
@@ -72,7 +72,7 @@ class VerifyTest extends TestCase
     public function testRunningFileNames(): void
     {
         $config = $this->config()->withFile('02.md')->withFile('doc/01.md');
-        $this->tester->verify($config, $this->tmpDir);
+        $this->tester->verify($config);
         $this->assertFalse($this->runner->failed());
         $this->assertEquals([
             $this->tmpDir . '/02.md/snippet1.php',

@@ -20,22 +20,25 @@ final class Tester
     /** @var Filesystem */
     private $fileSystem;
 
-    public function __construct(Runner $runner)
+    /** @var string */
+    private $tmpDir;
+
+    public function __construct(Runner $runner, string $tmpDir)
     {
         $this->runner = $runner;
         $this->fileSystem = new Filesystem();
+        $this->tmpDir = $tmpDir;
     }
 
-    public function verify(Configuration $config, string $tmpDir): void
+    public function verify(Configuration $config): void
     {
         foreach ($config->files() as $fileName) {
-            $this->verifyFile($config, $tmpDir, $fileName);
+            $this->verifyFile($config, $fileName);
         }
     }
 
     private function verifyFile(
         Configuration $config,
-        string $tmpDir,
         string $fileName
     ): void {
         $file = new SplFileInfo(
@@ -51,7 +54,7 @@ final class Tester
             (string) $file->getRealPath(),
             $config->currentDir()
         );
-        $fileDir = $tmpDir . '/' . $relPath;
+        $fileDir = $this->tmpDir . '/' . $relPath;
         $this->fileSystem->mkdir($fileDir);
         foreach ($this->getCodeFragments($file) as $i => $codeFragment) {
             $this->executeFragment($codeFragment, $fileDir, (int) $i, $header);
