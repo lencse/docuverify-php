@@ -50,6 +50,14 @@ class VerifyTest extends TestCase
         $this->assertEquals([$this->tmpDir . '/02.md/snippet1.php'], $this->runner->ran());
     }
 
+    public function testNonExistingFile(): void
+    {
+        $config = $this->config()->withFile('02.md')->withFile('missing.md');
+        $this->tester->verify($config, $this->tmpDir);
+        $this->assertFalse($this->runner->failed());
+        $this->assertEquals([$this->tmpDir . '/02.md/snippet1.php'], $this->runner->ran());
+    }
+
     public function testWithFileWithWrongCode(): void
     {
         $config = $this->config()->withFile('03.md');

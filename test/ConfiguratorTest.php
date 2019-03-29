@@ -3,8 +3,8 @@
 namespace Test;
 
 use Lencse\Docuverify\Configurator;
-use PHPUnit\Framework\Error\Error;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 use function iterator_to_array;
 use function strpos;
 
@@ -29,8 +29,13 @@ class ConfiguratorTest extends TestCase
     public function testWrongXml(): void
     {
         $configurator = new Configurator();
-        $this->expectException(Error::class);
-        $configurator->fromXml(__DIR__ . '/fixtures/xml/wrong.xml');
-        $this->assertTrue(strpos($this->getExpectedException()->getMessage(), 'header') !== false);
+        try {
+            $configurator->fromXml(__DIR__ . '/fixtures/xml/wrong.xml');
+        } catch (Throwable $e) {
+            $this->assertNotFalse(strpos($e->getMessage(), 'Missing child element'));
+
+            return;
+        }
+        $this->fail('Exception not thrown');
     }
 }
