@@ -12,7 +12,7 @@ jobs:
     include:
         - &TEST_JOB
             stage: Test
-            php: 7.1
+            php: 7.2
             env: DEPS=lowest
             before_install:
                 - phpenv config-rm xdebug.ini || return 0
@@ -21,16 +21,6 @@ jobs:
                 - if [[ $DEPS == 'latest' ]]; then travis_retry composer update -n --prefer-dist; fi
             script:
                 - make test
-
-        -
-            <<: *TEST_JOB
-            php: 7.1
-            env: DEPS=latest
-
-        -
-            <<: *TEST_JOB
-            php: 7.2
-            env: DEPS=lowest
 
         -
             <<: *TEST_JOB
