@@ -4,7 +4,7 @@ namespace Lencse\Docuverify;
 
 use function shell_exec;
 
-class RealRunner implements Runner
+final class RealRunner implements Runner
 {
     public function runFile(string $path): void
     {

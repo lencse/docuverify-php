@@ -6,12 +6,17 @@ use DOMDocument;
 use DOMElement;
 use DOMXPath;
 use function dirname;
+use Lencse\Docuverify\Exception\ConfigFileNotFound;
 use function realpath;
+use Symfony\Component\Filesystem\Filesystem;
 
 final class Configurator
 {
     public function fromXml(string $xmlFilePath): Configuration
     {
+        if (!(new Filesystem())->exists($xmlFilePath)) {
+            throw new ConfigFileNotFound($xmlFilePath);
+        }
         $dom = new DOMDocument('1.0', 'UTF-8');
         $dom->load($xmlFilePath);
         $dom->schemaValidate(__DIR__ . '/xml/schema.xsd');
